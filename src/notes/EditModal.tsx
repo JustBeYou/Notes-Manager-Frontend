@@ -6,9 +6,9 @@ import Form from 'react-bootstrap/Form';
 
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Note, NoteType} from "./Note";
+import {ModalProps, Note, NoteType} from "./Note";
 
-function EditModal(note: Note) {
+function EditModal({note}: ModalProps) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);

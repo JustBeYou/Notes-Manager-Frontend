@@ -5,9 +5,9 @@ import Button from 'react-bootstrap/Button';
 
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Note} from "./Note";
+import {ModalProps, Note} from "./Note";
 
-function DeleteModal(note: Note) {
+function DeleteModal({note}: ModalProps) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);

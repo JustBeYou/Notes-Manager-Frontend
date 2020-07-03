@@ -6,13 +6,17 @@ import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import ViewModal from "./ViewModal";
 
+export interface ModalProps {
+    note: Note,
+}
+
 export interface Note {
     id: number;
     name: string;
-    updated: string;
+    updated_at: string;
     type: NoteType;
-    actionsButtons: JSX.Element[],
 
+    actionsButtons: JSX.Element[];
     text?: string;
     filename?: string;
     link?: string;
@@ -45,7 +49,7 @@ export function noteActions(note: Note) {
 }
 
 function deleteAction(note: Note) {
-    return DeleteModal(note);
+    return <DeleteModal note={note}/>;
 }
 
 function downloadAction(note: Note) {
@@ -53,10 +57,10 @@ function downloadAction(note: Note) {
 }
 
 function viewAction(note: Note) {
-    return ViewModal(note);
+    return <ViewModal note={note}/>;
 }
 
 function editAction(note: Note) {
-    return EditModal(note);
+    return <EditModal note={note}/>;
 }
 

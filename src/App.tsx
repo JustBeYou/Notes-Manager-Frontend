@@ -1,35 +1,34 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import BootstrapTable from "react-bootstrap-table-next";
-import {Note, noteActions, NoteType} from "./notes/Note";
+import {Note} from "./notes/Note";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import AddModal from "./notes/AddModal";
+import {FetchThunk, State, store} from "./notes/State";
+import {ThunkDispatch} from "redux-thunk";
+import {connect, Provider} from 'react-redux';
+import {makeNotesDisplayable} from "./notes/Api";
 
-function App() {
-    const mockNotes = [
-        {"id": 1, "name": "Test note 1", "updated": (new Date()).toLocaleString(), "type": NoteType.LINK, "link": "https://example.com"},
-        {"id": 2, "name": "Test note 2", "updated": (new Date()).toLocaleString(), "type": NoteType.LINK, "link": "https://google.com"},
-        {"id": 3, "name": "Test note 3", "updated": (new Date()).toLocaleString(), "type": NoteType.TEXT, "text": "This is a sample note"},
-        {"id": 4, "name": "Test note 4", "updated": (new Date()).toLocaleString(), "type": NoteType.FILE},
-        {"id": 5, "name": "Test note 5", "updated": (new Date()).toLocaleString(), "type": NoteType.FILE},
-    ] as Note[];
+interface StateProps {
+    notes: Note[],
+}
 
-    const notesToDisplay: Note[] = mockNotes.map((note: Note) => {
-        return {
-            ...note,
-            actionsButtons: noteActions(note),
-            displayLink: note.link !== undefined ? <a href={note.link as string}>{note.link}</a> : undefined,
-        };
-    });
+interface DispatchProps {
+    fetch: () => Promise<void>,
+}
+
+function StatelessApp({notes, fetch}: StateProps & DispatchProps) {
+    useEffect(() => {
+        fetch();
+    }, []);
+    const notesToDisplay = makeNotesDisplayable(notes);
+    //const notesToDisplay = notes;
 
     return (
       <Container className="ml-5 mt-5">
@@ -68,7 +67,7 @@ const tableColumns = [
         sort: true,
     },
     {
-        dataField: "updated",
+        dataField: "updated_at",
         text: "Updated",
         sort: true,
     },
@@ -78,5 +77,25 @@ const tableColumns = [
     },
 ];
 Object.freeze(tableColumns);
+
+const mapStateToProps = (state: State): StateProps => {
+    return {
+        notes: state.notes,
+    };
+}
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
+    return {
+        fetch: async () => {
+            await dispatch(FetchThunk());
+        }
+    }
+}
+
+const StatefulApp = connect(mapStateToProps, mapDispatchToProps)(StatelessApp);
+
+function App() {
+    return (<Provider store={store}><StatefulApp/></Provider>);
+}
 
 export default App;
