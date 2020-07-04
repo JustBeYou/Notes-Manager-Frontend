@@ -11,7 +11,7 @@ import {ThunkDispatch} from "redux-thunk";
 import {DeleteThunk, FetchThunk, UpdateThunk} from "./State";
 import {connect} from "react-redux";
 import {text} from "@fortawesome/fontawesome-svg-core";
-import {updateNote} from "./Api";
+import {updateNote, uploadFile} from "./Api";
 
 interface DispatchProps {
     updateNote: (note: Note) => Promise<void>,
@@ -28,7 +28,7 @@ function BaseEditModal({note, updateNote}: ModalProps & DispatchProps) {
     const nameRef = React.createRef<HTMLInputElement>();
     const textRef = React.createRef<HTMLTextAreaElement>();
     const linkRef = React.createRef<HTMLInputElement>();
-    const fileRef = null;
+    const fileRef = React.createRef<HTMLInputElement>();
 
     function handleChange() {
         const element = selectRef.current;
@@ -63,9 +63,19 @@ function BaseEditModal({note, updateNote}: ModalProps & DispatchProps) {
                 newNote.link = linkRef.current!.value;
                 break;
             case NoteType.FILE:
+                if (fileRef.current!.files !== null && fileRef.current!.files.length >= 1) {
+                    newNote.original_filename = fileRef.current!.files[0].name;
+                }
                 break;
         }
         await updateNote(newNote);
+        if (newNote.type === NoteType.FILE && fileRef.current!.files !== null && fileRef.current!.files.length >= 1) {
+            const toUpload = fileRef.current!.files[0];
+            const formData = new FormData();
+            formData.append('note', toUpload);
+            await uploadFile(newNote, formData);
+        }
+
         handleClose();
     }
 
@@ -113,6 +123,7 @@ function BaseEditModal({note, updateNote}: ModalProps & DispatchProps) {
                         type === NoteType.FILE ?
                             <Form.Group controlId="">
                                 <Form.File
+                                    ref={fileRef}
                                     label="File upload"
                                 />
                             </Form.Group> : null

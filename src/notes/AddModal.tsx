@@ -10,9 +10,10 @@ import {Note, NoteType} from "./Note";
 import {ThunkDispatch} from "redux-thunk";
 import {CreateThunk, FetchThunk} from "./State";
 import {connect} from "react-redux";
+import {uploadFile} from "./Api";
 
 interface DispatchProps {
-    create: (note: Note) => Promise<void>,
+    create: (note: Note) => Promise<Note>,
 }
 
 function BaseAddModal({create}: DispatchProps) {
@@ -27,7 +28,7 @@ function BaseAddModal({create}: DispatchProps) {
     const nameRef = React.createRef<HTMLInputElement>();
     const textRef = React.createRef<HTMLTextAreaElement>();
     const linkRef = React.createRef<HTMLInputElement>();
-    const fileRef = null;
+    const fileRef = React.createRef<HTMLInputElement>();
 
     async function handleSubmit() {
         const newNote = {
@@ -43,9 +44,19 @@ function BaseAddModal({create}: DispatchProps) {
                 newNote.link = linkRef.current!.value;
                 break;
             case NoteType.FILE:
+                if (fileRef.current!.files !== null && fileRef.current!.files.length >= 1) {
+                    newNote.original_filename = fileRef.current!.files[0].name;
+                }
                 break;
         }
-        await create(newNote);
+        const createdNote = await create(newNote);
+        if (newNote.type === NoteType.FILE && fileRef.current!.files !== null && fileRef.current!.files.length >= 1) {
+            const toUpload = fileRef.current!.files[0];
+            const formData = new FormData();
+            formData.append('note', toUpload);
+            await uploadFile(createdNote, formData);
+        }
+
         handleClose()
     }
 
@@ -103,6 +114,7 @@ function BaseAddModal({create}: DispatchProps) {
                             type === NoteType.FILE ?
                                 <Form.Group controlId="">
                                     <Form.File
+                                        ref={fileRef}
                                         label="File upload"
                                     />
                                 </Form.Group> : null
@@ -126,8 +138,10 @@ function BaseAddModal({create}: DispatchProps) {
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
     return {
         create: async (note: Note) => {
-            await dispatch(CreateThunk(note));
+            const newNote = await dispatch(CreateThunk(note));
             await dispatch(FetchThunk());
+
+            return newNote as any;
         }
     }
 }

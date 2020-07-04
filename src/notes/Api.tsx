@@ -2,14 +2,19 @@ import React from "react";
 import {Note, noteActions, NoteType} from "./Note";
 import axios from "axios";
 
-const apiURL = 'http://localhost:8080/api';
+export const apiURL = 'http://localhost:8080/api';
 
 export async function fetchNotes() {
     return (await axios.get(`${apiURL}/notes`)).data as Note[];
 }
 
 export async function createNote(note: Note) {
-    await axios.post(`${apiURL}/notes`, note);
+    return (await axios.post(`${apiURL}/notes`, note)).data as Note;
+}
+
+export async function uploadFile(note: Note, formData: FormData) {
+    console.log(formData);
+    await axios.post(`${apiURL}/notes/${note.id}/upload`, formData);
 }
 
 export async function deleteNote(note: Note) {
@@ -30,7 +35,7 @@ export function makeNotesDisplayable(notes: Note[]) {
 
         switch (note.type) {
             case NoteType.FILE:
-                newNote.displayLink = <p>{note.filename}</p>;
+                newNote.displayLink = <p>{note.original_filename}</p>;
                 break;
             case NoteType.TEXT:
                 if (note.text !== undefined && note.text.length > 70) {

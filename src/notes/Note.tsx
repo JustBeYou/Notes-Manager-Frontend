@@ -5,6 +5,7 @@ import {faDownload, faEdit, faEye, faTrash} from "@fortawesome/free-solid-svg-ic
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import ViewModal from "./ViewModal";
+import {apiURL} from "./Api";
 
 export interface ModalProps {
     note: Note,
@@ -19,6 +20,7 @@ export interface Note {
     actionsButtons: JSX.Element[];
     text?: string;
     filename?: string;
+    original_filename?: string;
     link?: string;
     displayLink?: JSX.Element;
 }
@@ -53,7 +55,7 @@ function deleteAction(note: Note) {
 }
 
 function downloadAction(note: Note) {
-    return <FontAwesomeIcon icon={faDownload} className="ml-2"/>;
+    return <a href={`${apiURL}/notes/${note.id}/download`}><FontAwesomeIcon icon={faDownload} className="ml-2"/></a>;
 }
 
 function viewAction(note: Note) {

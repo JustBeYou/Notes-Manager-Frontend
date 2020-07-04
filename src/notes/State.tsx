@@ -54,9 +54,9 @@ export const FetchThunk = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
     }
 };
 
-export const CreateThunk = (note: Note): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
+export const CreateThunk = (note: Note): ThunkAction<Promise<Note>, {}, {}, AnyAction> => {
     return async () => {
-        await createNote(note);
+        return await createNote(note);
     }
 };
 
