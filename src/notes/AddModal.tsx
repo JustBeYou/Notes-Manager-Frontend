@@ -15,7 +15,7 @@ interface DispatchProps {
     create: (note: Note) => Promise<void>,
 }
 
-function StatelessAddModal({create}: DispatchProps) {
+function BaseAddModal({create}: DispatchProps) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -127,12 +127,11 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps
     return {
         create: async (note: Note) => {
             await dispatch(CreateThunk(note));
-            console.log('Created!');
             await dispatch(FetchThunk());
         }
     }
 }
 
-const AddModal = connect(null, mapDispatchToProps)(StatelessAddModal);
+const AddModal = connect(null, mapDispatchToProps)(BaseAddModal);
 
 export default AddModal;

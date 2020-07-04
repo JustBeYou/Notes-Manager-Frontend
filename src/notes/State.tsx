@@ -1,7 +1,7 @@
 import {Action, ActionCreator, AnyAction, applyMiddleware, createStore, Reducer} from "redux";
 import {Note} from "./Note";
 import thunk, {ThunkAction} from "redux-thunk";
-import {createNote, fetchNotes, makeNotesDisplayable} from "./Api";
+import {createNote, deleteNote, fetchNotes, makeNotesDisplayable, updateNote} from "./Api";
 
 export interface State {
     notes: Note[],
@@ -48,7 +48,6 @@ export const reducer: Reducer<State> = (state, action) => {
 
 export const FetchThunk = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
     return async (dispatch) => {
-        console.log('Fetch!');
         dispatch(Fetch());
         const notes = await fetchNotes();
         dispatch(Received(notes));
@@ -58,6 +57,18 @@ export const FetchThunk = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
 export const CreateThunk = (note: Note): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
     return async () => {
         await createNote(note);
+    }
+};
+
+export const DeleteThunk = (note: Note): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
+    return async () => {
+        await deleteNote(note);
+    }
+};
+
+export const UpdateThunk = (note: Note): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
+    return async () => {
+        await updateNote(note);
     }
 };
 
