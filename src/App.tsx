@@ -6,7 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import BootstrapTable from "react-bootstrap-table-next";
+import BootstrapTable, {SortOrder} from "react-bootstrap-table-next";
+import paginationFactory from 'react-bootstrap-table2-paginator';
 import {Note} from "./notes/Note";
 
 import AddModal from "./notes/AddModal";
@@ -28,7 +29,6 @@ function StatelessApp({notes, fetch}: StateProps & DispatchProps) {
         fetch();
     }, []);
     const notesToDisplay = makeNotesDisplayable(notes);
-    //const notesToDisplay = notes;
 
     return (
       <Container className="ml-5 mt-5">
@@ -43,7 +43,12 @@ function StatelessApp({notes, fetch}: StateProps & DispatchProps) {
           </Row>
           <Row>
               <Col>
-                  <BootstrapTable keyField='id' data={ notesToDisplay } columns={ tableColumns } />
+                  <BootstrapTable
+                      keyField='id'
+                      data={ notesToDisplay }
+                      columns={ tableColumns }
+                      defaultSorted = { defaultSorted }
+                      pagination= { paginationFactory({}) }/>
               </Col>
           </Row>
       </Container>
@@ -51,11 +56,6 @@ function StatelessApp({notes, fetch}: StateProps & DispatchProps) {
 }
 
 const tableColumns = [
-    {
-        dataField: "id",
-        text: "Note ID",
-        sort: true,
-    },
     {
         dataField: "name",
         text: "Name",
@@ -77,6 +77,18 @@ const tableColumns = [
     },
 ];
 Object.freeze(tableColumns);
+
+const defaultSorted = [
+    {
+        dataField: 'updated_at',
+        order: 'desc' as SortOrder,
+    },
+    {
+    dataField: 'name',
+    order: 'asc' as SortOrder,
+    }
+] as any;
+Object.freeze(defaultSorted);
 
 const mapStateToProps = (state: State): StateProps => {
     return {

@@ -25,6 +25,7 @@ export function makeNotesDisplayable(notes: Note[]) {
         const newNote = {
             ...note,
             actionsButtons: noteActions(note),
+            updated_at: new Date(note.updated_at).toLocaleString('en-GB'),
         };
 
         switch (note.type) {
