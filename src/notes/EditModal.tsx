@@ -8,10 +8,9 @@ import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ModalProps, Note, NoteType} from "./Note";
 import {ThunkDispatch} from "redux-thunk";
-import {DeleteThunk, FetchThunk, UpdateThunk} from "./State";
+import {FetchThunk, UpdateThunk} from "./State";
 import {connect} from "react-redux";
-import {text} from "@fortawesome/fontawesome-svg-core";
-import {updateNote, uploadFile} from "./Api";
+import {uploadFile} from "./Api";
 
 interface DispatchProps {
     updateNote: (note: Note) => Promise<void>,
@@ -51,7 +50,7 @@ function BaseEditModal({note, updateNote}: ModalProps & DispatchProps) {
         if (nameRef.current!.value !== "" && nameRef.current!.value !== undefined) {
             newNote.name = nameRef.current!.value;
         }
-        if (note.type != type) {
+        if (note.type !== type) {
             note.type = type;
         }
 

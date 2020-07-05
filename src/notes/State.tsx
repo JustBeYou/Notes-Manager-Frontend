@@ -1,7 +1,7 @@
 import {Action, ActionCreator, AnyAction, applyMiddleware, createStore, Reducer} from "redux";
 import {Note} from "./Note";
-import thunk, {ThunkAction} from "redux-thunk";
-import {createNote, deleteNote, fetchNotes, makeNotesDisplayable, updateNote} from "./Api";
+import thunk, {ThunkAction, ThunkDispatch} from "redux-thunk";
+import {createNote, deleteNote, fetchNotes, updateNote} from "./Api";
 
 export interface State {
     notes: Note[],
@@ -73,3 +73,4 @@ export const UpdateThunk = (note: Note): ThunkAction<Promise<void>, {}, {}, AnyA
 };
 
 export const store = createStore(reducer, applyMiddleware(thunk));
+(store.dispatch as ThunkDispatch<{}, {}, any>)(FetchThunk());

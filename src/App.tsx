@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import './App.css';
 
 import Container from 'react-bootstrap/Container';
@@ -11,8 +11,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import {Note} from "./notes/Note";
 
 import AddModal from "./notes/AddModal";
-import {FetchThunk, State, store} from "./notes/State";
-import {ThunkDispatch} from "redux-thunk";
+import {State, store} from "./notes/State";
 import {connect, Provider} from 'react-redux';
 import {makeNotesDisplayable} from "./notes/Api";
 
@@ -20,14 +19,7 @@ interface StateProps {
     notes: Note[],
 }
 
-interface DispatchProps {
-    fetch: () => Promise<void>,
-}
-
-function StatelessApp({notes, fetch}: StateProps & DispatchProps) {
-    useEffect(() => {
-        fetch();
-    }, []);
+function StatelessApp({notes}: StateProps) {
     const notesToDisplay = makeNotesDisplayable(notes);
 
     return (
@@ -96,15 +88,7 @@ const mapStateToProps = (state: State): StateProps => {
     };
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
-    return {
-        fetch: async () => {
-            await dispatch(FetchThunk());
-        }
-    }
-}
-
-const StatefulApp = connect(mapStateToProps, mapDispatchToProps)(StatelessApp);
+const StatefulApp = connect(mapStateToProps)(StatelessApp);
 
 function App() {
     return (<Provider store={store}><StatefulApp/></Provider>);

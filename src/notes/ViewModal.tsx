@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {ModalProps, Note} from "./Note";
+import {ModalProps} from "./Note";
 
 function ViewModal({note}: ModalProps) {
     const [show, setShow] = useState(false);
