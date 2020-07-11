@@ -38,8 +38,8 @@ export function makeNotesDisplayable(notes: Note[]) {
                 newNote.displayLink = <p>{note.original_filename}</p>;
                 break;
             case NoteType.TEXT:
-                if (note.text !== undefined && note.text.length > 70) {
-                    newNote.displayLink = <p>{note.text.slice(0, 70) + " ... "}</p>;
+                if (note.text !== undefined && (note.text.length > 70 || note.text.includes("\n"))) {
+                    newNote.displayLink = <p>{note.text.split("\n")[0].slice(0, 70) + " ... "}</p>;
                 } else if (note.text !== undefined) {
                     newNote.displayLink = <p>{note.text}</p>;
                 }

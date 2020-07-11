@@ -2,6 +2,7 @@ import React, {useState} from "react";
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -22,7 +23,13 @@ function ViewModal({note}: ModalProps) {
                     <Modal.Title>{note.name}</Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body>{note.text}</Modal.Body>
+                <Modal.Body>
+                    {
+                        note.text === undefined ? null : note.text.split('\n').map((elem) => {
+                            return <>{elem}<br/></>;
+                        })
+                    }
+                </Modal.Body>
 
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
